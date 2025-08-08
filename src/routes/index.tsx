@@ -1,9 +1,9 @@
-import logo from '../assets/logo2.png'
+import logo from '/logo2.png'
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { PenLine, Loader2 } from 'lucide-react'
 import { cn } from '../lib/utils'
-import Flame from '@/components/Flame'
+import Flame from '@/components/flame'
 
 export const Route = createFileRoute('/')({
   component: Landing,
@@ -153,7 +153,7 @@ function IntentionDemo() {
   }
 
   return (
-    <div className="bg-neutral-800/40 backdrop-blur-lg rounded-[3rem] shadow-2xl overflow-hidden relative h-[650px] flex items-center justify-center">
+    <div className="bg-primary/80 backdrop-blur-lg rounded-[3rem] shadow-2xl overflow-hidden relative h-[650px] flex items-center justify-center">
       <div
         className={`absolute inset-0 bg-linear-to-br from-slate-900 to-slate-950 transition-all duration-1000 flex items-center justify-center text-white ${
           siteBlurred ? 'blur-2xl' : 'blur-0'
@@ -236,10 +236,7 @@ function IntentionDemo() {
                   }}
                 />
               </div>
-              <div className="flex items-center justify-between text-white/60 text-sm mt-2 px-1">
-                <span>{state.input.trim().length} / 11+ required</span>
-                {!isValid && <span>Write at least 11 characters</span>}
-              </div>
+            
             </div>
           ) : (
             <div className="animate-slide-in-up text-center mt-6 max-w-prose px-4">
@@ -248,19 +245,6 @@ function IntentionDemo() {
               </p>
               <p className="text-sm text-white/60 mt-2">Your intention has been set</p>
             </div>
-          )}
-
-          {!isSuccess && (
-            <button
-              onClick={submitDemo}
-              disabled={!isValid || isSubmitting}
-              className={cn(
-                'bg-white/10 border border-white/20 text-white px-6 py-3 rounded-lg text-lg cursor-pointer transition-all font-medium animate-slide-in-up delay-300',
-                (!isValid || isSubmitting) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/20 hover:border-white/30',
-              )}
-            >
-              Set Intention
-            </button>
           )}
         </div>
       </div>
