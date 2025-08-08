@@ -1,9 +1,19 @@
 import logo from '/logo2.png'
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useRef, useState, type ReactNode, type Ref } from 'react'
 import { PenLine, Loader2 } from 'lucide-react'
 import { cn } from '../lib/utils'
 import Flame from '@/components/flame'
+import { SquarePenIcon } from '@/components/ui/square-pen'
+import { ShieldCheckIcon } from '@/components/ui/shield-check'
+import { TimerIcon } from '@/components/ui/timer'
+import { RocketIcon } from '@/components/ui/rocket'
+import { SparklesIcon } from '@/components/ui/sparkles'
+import { CheckIcon } from '@/components/ui/check'
+import { SettingsGearIcon } from '@/components/ui/settings-gear'
+import { KeyboardIcon } from '@/components/ui/keyboard'
+import { ChartPieIcon } from '@/components/ui/chart-pie'
+import { FingerprintIcon } from '@/components/ui/fingerprint'
 
 export const Route = createFileRoute('/')({
   component: Landing,
@@ -82,27 +92,42 @@ function Landing() {
       </div>
 
       <div className="max-w-[1200px] mx-auto px-6 pb-24">
-        <div className="flex flex-wrap gap-10 mt-12 sm:mt-16 justify-center">
-          <Feature 
-            icon="✏️"
-            title="Set Your Intention"
-            description="When you want to use a potentially distracting site, Intent will prompt you to declare your clear intention."
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-10 gap-y-12 mt-12 sm:mt-16 justify-items-center">
+          <Feature
+            renderIcon={(ref) => <SquarePenIcon ref={ref as Ref<any>} size={56} />}
+            title="Set your intention"
           />
-          <Feature 
-            icon="🎯"
-            title="Stay Focused"
-            description="Intent monitors your activity and ensures you stay aligned with your declared intention."
+          <Feature
+            renderIcon={(ref) => <ShieldCheckIcon ref={ref as Ref<any>} size={56} />}
+            title="Stay focused"
           />
-          <Feature 
-            icon="🔒"
-            title="Gentle Reminders"
-            description="If your activity drifts from your intention, Intent gently steps in and reblocks the site to help you refocus."
+          <Feature
+            renderIcon={(ref) => <TimerIcon ref={ref as Ref<any>} size={56} />}
+            title="Gentle reminders"
           />
-          <Feature 
-            icon="🌱"
-            title="Build Better Habits"
-            description="Over time, Intent helps you develop healthier browsing habits and maintain focus on what matters most."
+          <Feature
+            renderIcon={(ref) => <RocketIcon ref={ref as Ref<any>} size={56} />}
+            title="Build better habits"
           />
+          <Feature
+            renderIcon={(ref) => <SettingsGearIcon ref={ref as Ref<any>} size={56} />}
+            title="Flexible customization"
+          />
+          <Feature
+            renderIcon={(ref) => <SparklesIcon ref={ref as Ref<any>} size={56} />}
+            title="Delightful experience"
+          />
+          <Feature
+            renderIcon={(ref) => <ChartPieIcon ref={ref as Ref<any>} size={56} />}
+            title="Actionable insights"
+          />
+          <Feature
+            renderIcon={(ref) => <FingerprintIcon ref={ref as Ref<any>} size={56} />}
+            title="Privacy‑first design"
+          />
+          {/* Extras available to swap in later */}
+          {/* <Feature icon={<SparklesIcon size={28} />} title="Delightful UX" /> */}
+          {/* <Feature icon={<CheckIcon size={28} />} title="Progress Tracking" /> */}
         </div>
       </div>
 
@@ -129,14 +154,22 @@ function Landing() {
   )
 }
 
-function Feature({ icon, title, description }: { icon: string; title: string; description: string }) {
+type IconHandle = { startAnimation?: () => void; stopAnimation?: () => void }
+
+function Feature({ renderIcon, title }: { renderIcon: (ref: Ref<IconHandle>) => ReactNode; title: string }) {
+  const iconRef = useRef<IconHandle | null>(null)
   return (
-    <div className="flex-1 min-w-[250px] max-w-[300px] text-center">
-      <div className="size-16 rounded-xl flex items-center justify-center mx-auto mb-5 text-3xl">
-        {icon}
+    <div
+      className="w-full min-w-0 max-w-[360px] sm:max-w-[320px] text-center group px-2"
+      onMouseEnter={() => iconRef.current?.startAnimation?.()}
+      onMouseLeave={() => iconRef.current?.stopAnimation?.()}
+    >
+      <div className="size-24 rounded-xl flex items-center justify-center mx-auto mb-4 text-3xl">
+        {renderIcon((iconRef as unknown) as Ref<IconHandle>)}
       </div>
-      <h3 className="text-xl font-medium text-primary mb-3">{title}</h3>
-      <p className="text-muted-foreground leading-relaxed text-lg">{description}</p>
+      <h3 className="text-[20px] sm:text-[22px] md:text-2xl font-semibold text-primary tracking-tight leading-snug break-words whitespace-normal max-w-[20ch] sm:max-w-[16ch] md:max-w-[18ch] mx-auto">
+        {title}
+      </h3>
     </div>
   )
 }
