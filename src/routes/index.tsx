@@ -23,14 +23,14 @@ function Landing() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50 relative">
-      <div className="fixed top-0 left-0 right-0 h-16 bg-neutral-50/80 backdrop-blur-md z-50 flex items-center justify-between px-8">
+    <div className="min-h-screen bg-background relative">
+      <div className="fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md z-50 flex items-center justify-between px-8">
         <div className="flex items-center gap-3">
           <div className="size-7 bg-orange-500 rounded-lg" />
-          <div className="text-lg font-semibold text-neutral-900">Intent</div>
+          <div className="text-lg font-semibold text-primary">Intent</div>
         </div>
-        <div className="hidden sm:flex items-center gap-6 text-sm text-neutral-600">
-          <button className="hover:text-neutral-900 transition-colors">FAQs</button>
+        <div className="hidden sm:flex items-center gap-6 text-sm text-muted-foreground">
+          <button className="hover:text-primary transition-colors">FAQs</button>
           <button
             onClick={openExtension}
             className="bg-orange-500 text-white px-4 py-2 font-medium shadow-sm shadow-orange-500/30 hover:bg-orange-600 active:scale-[100.5%] rounded-lg"
@@ -47,7 +47,7 @@ function Landing() {
       </div>
 
       <div className="pt-40 sm:pt-44 px-6 max-w-[1200px] mx-auto">
-        <h1 className="text-[48px] sm:text-[72px] lg:text-[112px] font-semibold text-neutral-900 leading-[0.9] tracking-tight mb-6">
+        <h1 className="text-[48px] sm:text-[72px] lg:text-[112px] font-semibold text-primary leading-[0.9] tracking-tight mb-6">
           Browse with
           <br/>
           <span className="relative inline-block">
@@ -123,7 +123,7 @@ function Landing() {
           </span>
         </button>
         <div className="w-3/5 h-px bg-linear-to-r from-transparent via-orange-500/20 to-transparent mx-auto my-10"></div>
-        <div className="text-neutral-600 text-sm pb-10">© 2025 Intent. All rights reserved.</div>
+        <div className="text-muted-foreground text-sm pb-10">© 2025 Intent. All rights reserved.</div>
       </div>
     </div>
   )
@@ -135,8 +135,8 @@ function Feature({ icon, title, description }: { icon: string; title: string; de
       <div className="size-16 rounded-xl flex items-center justify-center mx-auto mb-5 text-3xl">
         {icon}
       </div>
-      <h3 className="text-xl font-medium text-neutral-900 mb-3">{title}</h3>
-      <p className="text-neutral-600 leading-relaxed text-lg">{description}</p>
+      <h3 className="text-xl font-medium text-primary mb-3">{title}</h3>
+      <p className="text-muted-foreground leading-relaxed text-lg">{description}</p>
     </div>
   )
 }
@@ -165,9 +165,9 @@ function IntentionDemo() {
   }
 
   return (
-    <div className="bg-primary/80 backdrop-blur-lg rounded-[2rem] md:rounded-[2.5rem] shadow-2xl overflow-hidden relative h-[480px] sm:h-[520px] md:h-[560px] flex items-center justify-center">
+    <div className="bg-primary/80 backdrop-blur-lg rounded-xl md:rounded-4xl shadow-2xl overflow-hidden relative h-[480px] sm:h-[520px] md:h-[560px] flex items-center justify-center">
       <div
-        className={`absolute inset-0 bg-linear-to-br from-slate-900 to-slate-950 transition-all duration-1000 flex items-center justify-center text-white ${
+        className={`absolute inset-0 bg-linear-to-br from-primary to-primary transition-all duration-1000 flex items-center justify-center text-primary-foreground ${
           siteBlurred ? 'blur-2xl' : 'blur-0'
         }`}
       >
@@ -184,7 +184,7 @@ function IntentionDemo() {
       >
         <div
           className={cn(
-            'absolute inset-0 z-0 bg-radial-[ellipse_80%_60%_at_50%_0%] from-stone-900 to-transparent to-70% transition-colors duration-1000',
+            'absolute inset-0 z-0 bg-radial-[ellipse_80%_60%_at_50%_0%] from-primary to-transparent to-70% transition-colors duration-1000',
             isSuccess && 'from-orange-900/20',
           )}
         />
@@ -230,14 +230,14 @@ function IntentionDemo() {
               </div>
 
               <div className="relative">
-                <PenLine className="absolute left-4 top-5.5 size-4 text-white/60 z-10" />
+                <PenLine className="absolute left-4 top-5.5 size-4 text-primary-foreground/60 z-10" />
                 {isSubmitting && (
-                  <Loader2 className="absolute right-4 top-4 size-4 text-white/60 z-10 animate-spin" />
+                  <Loader2 className="absolute right-4 top-4 size-4 text-primary-foreground/60 z-10 animate-spin" />
                 )}
                 <textarea
                   value={state.input}
                   onChange={(e) => setState((s) => ({ ...s, input: e.target.value }))}
-                  className="w-full p-4 text-lg resize-none rounded-xl shadow-lg pl-10 pr-10 bg-white/5 backdrop-blur-sm text-white border border-white/10 placeholder-white/40 focus:border-white/20 focus:outline-none min-h-[120px]"
+                  className="w-full p-4 text-lg resize-none rounded-xl shadow-lg pl-10 pr-10 bg-primary-foreground/5 backdrop-blur-sm text-primary-foreground border border-primary-foreground/10 placeholder-primary-foreground/40 focus:border-primary-foreground/20 focus:outline-none min-h-[120px]"
                   placeholder="What is your intention for this site?"
                   disabled={isSubmitting}
                   onKeyDown={(e) => {
@@ -255,7 +255,7 @@ function IntentionDemo() {
               <p className="text-lg leading-relaxed break-words overflow-hidden font-medium text-orange-500/80">
                 {state.input}
               </p>
-              <p className="text-sm text-white/60 mt-2">Your intention has been set</p>
+              <p className="text-sm text-primary-foreground/60 mt-2">Your intention has been set</p>
             </div>
           )}
         </div>
