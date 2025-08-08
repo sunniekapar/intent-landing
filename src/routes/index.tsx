@@ -24,53 +24,65 @@ function Landing() {
 
   return (
     <div className="min-h-screen bg-neutral-50 relative">
-      <div className="fixed top-0 left-0 right-0 h-20 bg-neutral-50/80 backdrop-blur-md z-50 flex items-center px-10">
+      <div className="fixed top-0 left-0 right-0 h-16 bg-neutral-50/80 backdrop-blur-md z-50 flex items-center justify-between px-8">
         <div className="flex items-center gap-3">
-          <div className="size-8 bg-orange-500 rounded-lg"></div>
-          <div className="text-xl font-medium text-neutral-900">Intent</div>
+          <div className="size-7 bg-orange-500 rounded-lg" />
+          <div className="text-lg font-semibold text-neutral-900">Intent</div>
+        </div>
+        <div className="hidden sm:flex items-center gap-6 text-sm text-neutral-600">
+          <button className="hover:text-neutral-900 transition-colors">FAQs</button>
+          <button
+            onClick={openExtension}
+            className="bg-orange-500 text-white px-4 py-2 font-medium shadow-sm shadow-orange-500/30 hover:bg-orange-600 active:scale-[100.5%] rounded-lg"
+          >
+            Get Extension
+          </button>
         </div>
       </div>
 
       <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-radial-[at_50%_100%] from-orange-500/[0.06] from-0% to-transparent to-60%" />
-        <div className="absolute inset-0 bg-radial-[at_50%_100%] from-orange-500/[0.04] from-0% to-transparent to-70%" />
-        <div className="absolute inset-0 bg-radial-[at_50%_100%] from-orange-500/[0.08] from-0% to-transparent to-80%" />
+        <div className="absolute inset-0 bg-radial-[at_50%_90%] from-orange-500/[0.05] from-0% to-transparent to-65%" />
+        <div className="absolute inset-0 bg-radial-[at_50%_95%] from-orange-500/[0.04] from-0% to-transparent to-75%" />
+        <div className="absolute inset-0 bg-radial-[at_50%_100%] from-orange-500/[0.07] from-0% to-transparent to-85%" />
       </div>
 
-      <div className="pt-48 px-20 max-w-5xl mx-auto">
-        <h1 className="text-8xl font-semibold text-neutral-900 mb-8 leading-none tracking-tight">
-          Browse with<br/>
+      <div className="pt-40 sm:pt-44 px-6 max-w-[1200px] mx-auto">
+        <h1 className="text-[48px] sm:text-[72px] lg:text-[112px] font-semibold text-neutral-900 leading-[0.9] tracking-tight mb-6">
+          Browse with
+          <br/>
           <span className="relative inline-block">
             <span className="relative z-10 px-1">intention</span>
             <span className="absolute bottom-0 left-0 right-0 h-[45%] bg-linear-to-t from-orange-500/80 to-orange-500/60 -z-0"></span>
           </span>
         </h1>
-        <p className="text-2xl text-neutral-600 mb-6 max-w-2xl">
-          Intent helps you stay focused by asking for your purpose before accessing any website.
+        <p className="text-lg sm:text-2xl text-muted-foreground max-w-3xl">
+          Intent keeps you grounded by asking for your purpose before accessing any distracting website.
         </p>
-        <button 
-          onClick={openExtension}
-          className="group relative inline-flex items-center justify-center overflow-hidden bg-orange-500 text-white px-8 py-4 rounded-xl text-xl font-semibold transition-all duration-500 hover:bg-orange-600 shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40"
-        >
-          <span className="transition-all duration-300 group-hover:-translate-x-40 group-hover:opacity-0">
-            Get Started
-          </span>
-          <span className="absolute inset-0 flex items-center justify-center transition-all duration-300 translate-x-40 opacity-0 group-hover:translate-x-0 group-hover:opacity-100">
-            <svg width="24" height="24" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M8.14645 3.14645C8.34171 2.95118 8.65829 2.95118 8.85355 3.14645L12.8536 7.14645C13.0488 7.34171 13.0488 7.65829 12.8536 7.85355L8.85355 11.8536C8.65829 12.0488 8.34171 12.0488 8.14645 11.8536C7.95118 11.6583 7.95118 11.3417 8.14645 11.1464L11.2929 8H2.5C2.22386 8 2 7.77614 2 7.5C2 7.22386 2.22386 7 2.5 7H11.2929L8.14645 3.85355C7.95118 3.65829 7.95118 3.34171 8.14645 3.14645Z"
-                fill="currentColor" fillRule="evenodd" clipRule="evenodd" />
-            </svg>
-          </span>
-        </button>
+        <div className="mt-8">
+          <button 
+            onClick={openExtension}
+            className="group relative inline-flex items-center justify-center overflow-hidden bg-orange-500 text-white px-8 py-4 rounded-xl text-lg sm:text-xl font-semibold transition-all duration-500 hover:bg-orange-600 shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40"
+          >
+            <span className="transition-all duration-300 group-hover:-translate-x-40 group-hover:opacity-0">
+              Get Started
+            </span>
+            <span className="absolute inset-0 flex items-center justify-center transition-all duration-300 translate-x-40 opacity-0 group-hover:translate-x-0 group-hover:opacity-100">
+              <svg width="24" height="24" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M8.14645 3.14645C8.34171 2.95118 8.65829 2.95118 8.85355 3.14645L12.8536 7.14645C13.0488 7.34171 13.0488 7.65829 12.8536 7.85355L8.85355 11.8536C8.65829 12.0488 8.34171 12.0488 8.14645 11.8536C7.95118 11.6583 7.95118 11.3417 8.14645 11.1464L11.2929 8H2.5C2.22386 8 2 7.77614 2 7.5C2 7.22386 2.22386 7 2.5 7H11.2929L8.14645 3.85355C7.95118 3.65829 7.95118 3.34171 8.14645 3.14645Z"
+                  fill="currentColor" fillRule="evenodd" clipRule="evenodd" />
+              </svg>
+            </span>
+          </button>
+        </div>
       </div>
 
-      <div className="max-w-6xl mx-auto mb-20 px-10 mt-16">
+      <div className="max-w-[1200px] mx-auto mb-24 px-6 mt-16 sm:mt-24">
         <IntentionDemo />
       </div>
 
-      <div className="max-w-6xl mx-auto px-10 pb-20">
-        <div className="flex flex-wrap gap-10 mt-16 justify-center">
+      <div className="max-w-[1200px] mx-auto px-6 pb-24">
+        <div className="flex flex-wrap gap-10 mt-12 sm:mt-16 justify-center">
           <Feature 
             icon="✏️"
             title="Set Your Intention"
@@ -94,7 +106,7 @@ function Landing() {
         </div>
       </div>
 
-      <div className="text-center py-16">
+      <div className="text-center py-20">
         <button 
           onClick={openExtension}
           className="group relative inline-flex items-center justify-center overflow-hidden bg-orange-500 text-white px-8 py-4 rounded-xl text-xl font-semibold transition-all duration-500 hover:bg-orange-600 shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40"
@@ -153,7 +165,7 @@ function IntentionDemo() {
   }
 
   return (
-    <div className="bg-primary/80 backdrop-blur-lg rounded-[3rem] shadow-2xl overflow-hidden relative h-[650px] flex items-center justify-center">
+    <div className="bg-primary/80 backdrop-blur-lg rounded-[2rem] md:rounded-[2.5rem] shadow-2xl overflow-hidden relative h-[480px] sm:h-[520px] md:h-[560px] flex items-center justify-center">
       <div
         className={`absolute inset-0 bg-linear-to-br from-slate-900 to-slate-950 transition-all duration-1000 flex items-center justify-center text-white ${
           siteBlurred ? 'blur-2xl' : 'blur-0'
@@ -218,7 +230,7 @@ function IntentionDemo() {
               </div>
 
               <div className="relative">
-                <PenLine className="absolute left-4 top-4 size-4 text-white/60 z-10" />
+                <PenLine className="absolute left-4 top-5.5 size-4 text-white/60 z-10" />
                 {isSubmitting && (
                   <Loader2 className="absolute right-4 top-4 size-4 text-white/60 z-10 animate-spin" />
                 )}
