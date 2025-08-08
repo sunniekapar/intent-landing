@@ -1,5 +1,9 @@
+import logo from '../assets/logo2.png'
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
+import { PenLine, Loader2 } from 'lucide-react'
+import { cn } from '../lib/utils'
+import Flame from '@/components/Flame'
 
 export const Route = createFileRoute('/')({
   component: Landing,
@@ -13,17 +17,6 @@ export const Route = createFileRoute('/')({
 })
 
 function Landing() {
-  const [intentionInput, setIntentionInput] = useState('')
-  const [showOverlay, setShowOverlay] = useState(true)
-  const [siteBlurred, setSiteBlurred] = useState(true)
-
-  const submitDemo = () => {
-    if (intentionInput.trim()) {
-      setShowOverlay(false)
-      setSiteBlurred(false)
-    }
-  }
-
   const openExtension = () => {
     console.log('[Landing] Get Started button clicked')
     console.log('Opening extension...')
@@ -73,44 +66,7 @@ function Landing() {
       </div>
 
       <div className="max-w-6xl mx-auto mb-20 px-10 mt-16">
-        <div className="bg-neutral-800/40 backdrop-blur-lg rounded-[3rem] shadow-2xl overflow-hidden relative h-[650px] flex items-center justify-center">
-          <div 
-            className={`absolute inset-0 bg-linear-to-br from-slate-900 to-slate-950 transition-all duration-1000 flex items-center justify-center text-white ${
-              siteBlurred ? 'blur-2xl' : 'blur-0'
-            }`}
-          >
-            <div className="text-center opacity-70">
-              <h2 className="text-3xl font-semibold mb-2">Sample Website</h2>
-              <p className="text-lg">This represents a potentially distracting website</p>
-            </div>
-          </div>
-
-          <div 
-            className={`absolute inset-0 flex items-center justify-center transition-opacity duration-1000 ${
-              showOverlay ? 'opacity-100' : 'opacity-0 pointer-events-none'
-            }`}
-          >
-            <div className="text-center max-w-md mx-5">
-              <h3 className="text-white text-2xl font-medium mb-4">What's your intention?</h3>
-              <p className="text-white/80 mb-6">Enter your purpose for visiting this website:</p>
-              <input 
-                type="text"
-                value={intentionInput}
-                onChange={(e) => setIntentionInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && submitDemo()}
-                className="w-full px-4 py-3 rounded-lg text-lg mb-5 outline-none bg-transparent text-white border border-white/20 placeholder-neutral-400 focus:border-white/40 transition-colors"
-                placeholder="e.g., Research for my project"
-                autoFocus
-              />
-              <button 
-                onClick={submitDemo}
-                className="bg-white/10 border border-white/20 text-white px-6 py-3 rounded-lg text-lg cursor-pointer transition-all font-medium hover:bg-white/20 hover:border-white/30"
-              >
-                Continue
-              </button>
-            </div>
-          </div>
-        </div>
+        <IntentionDemo />
       </div>
 
       <div className="max-w-6xl mx-auto px-10 pb-20">
@@ -169,6 +125,145 @@ function Feature({ icon, title, description }: { icon: string; title: string; de
       </div>
       <h3 className="text-xl font-medium text-neutral-900 mb-3">{title}</h3>
       <p className="text-neutral-600 leading-relaxed text-lg">{description}</p>
+    </div>
+  )
+}
+
+function IntentionDemo() {
+  const [state, setState] = useState<{
+    input: string
+    phase: 'idle' | 'submitting' | 'success' | 'hidden'
+  }>({ input: '', phase: 'idle' })
+
+  const isValid = state.input.trim().length > 10
+  const isSubmitting = state.phase === 'submitting'
+  const isSuccess = state.phase === 'success'
+  const showOverlay = state.phase !== 'hidden'
+  const siteBlurred = showOverlay
+
+  const submitDemo = () => {
+    if (!isValid || isSubmitting) return
+    setState((s) => ({ ...s, phase: 'submitting' }))
+    setTimeout(() => {
+      setState((s) => ({ ...s, phase: 'success' }))
+      setTimeout(() => {
+        setState((s) => ({ ...s, phase: 'hidden' }))
+      }, 3000)
+    }, 1500)
+  }
+
+  return (
+    <div className="bg-neutral-800/40 backdrop-blur-lg rounded-[3rem] shadow-2xl overflow-hidden relative h-[650px] flex items-center justify-center">
+      <div
+        className={`absolute inset-0 bg-linear-to-br from-slate-900 to-slate-950 transition-all duration-1000 flex items-center justify-center text-white ${
+          siteBlurred ? 'blur-2xl' : 'blur-0'
+        }`}
+      >
+        <div className="text-center opacity-70">
+          <h2 className="text-3xl font-semibold mb-2">Sample Website</h2>
+          <p className="text-lg">This represents a potentially distracting website</p>
+        </div>
+      </div>
+
+      <div
+        className={`absolute inset-0 transition-opacity duration-1000 ${
+          showOverlay ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        <div
+          className={cn(
+            'absolute inset-0 z-0 bg-radial-[ellipse_80%_60%_at_50%_0%] from-stone-900 to-transparent to-70% transition-colors duration-1000',
+            isSuccess && 'from-orange-900/20',
+          )}
+        />
+        <div
+          className={cn(
+            'relative space-y-8 w-full max-w-lg mx-auto flex flex-col items-center justify-center min-h-full px-4',
+            isSuccess && 'animate-slide-out-up delay-1000',
+          )}
+        >
+          <div className="flex justify-center relative animate-slide-in-up">
+            <div className="absolute left-1/2 -translate-x-1/2 bottom-10.5">
+              <Flame
+                className={cn(
+                  'scale-35 scale-x-45',
+                  isSuccess ? 'animate-flame-ignition' : 'opacity-0 scale-0',
+                )}
+              />
+            </div>
+            <img
+              src={logo}
+              alt="Logo"
+              className={cn(
+                'size-24 opacity-80 transition-all duration-500',
+                isSuccess && [
+                  'rounded-full',
+                  'bg-[radial-gradient(circle,color-mix(in_srgb,rgb(251,146,60)_15%,transparent)_60%,transparent_100%)]',
+                  'shadow-[0_0_40px_10px_rgb(251,146,60),0_0_0_4px_color-mix(in_srgb,rgb(251,146,60)_8%,transparent)]',
+                  'opacity-100',
+                ],
+              )}
+            />
+          </div>
+
+          {!isSuccess ? (
+            <div
+              className={cn(
+                'relative w-full border-2 border-transparent rounded-xl animate-intention-glow',
+                'animate-slide-in-up delay-150',
+              )}
+            >
+              <div className="absolute top-0 flex w-full justify-center">
+                <div className="h-[1px] animate-border-width rounded-full bg-gradient-to-r from-transparent via-orange-700 to-transparent transition-all duration-1000" />
+              </div>
+
+              <div className="relative">
+                <PenLine className="absolute left-4 top-4 size-4 text-white/60 z-10" />
+                {isSubmitting && (
+                  <Loader2 className="absolute right-4 top-4 size-4 text-white/60 z-10 animate-spin" />
+                )}
+                <textarea
+                  value={state.input}
+                  onChange={(e) => setState((s) => ({ ...s, input: e.target.value }))}
+                  className="w-full p-4 text-lg resize-none rounded-xl shadow-lg pl-10 pr-10 bg-white/5 backdrop-blur-sm text-white border border-white/10 placeholder-white/40 focus:border-white/20 focus:outline-none min-h-[120px]"
+                  placeholder="What is your intention for this site?"
+                  disabled={isSubmitting}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey && isValid) {
+                      e.preventDefault()
+                      submitDemo()
+                    }
+                  }}
+                />
+              </div>
+              <div className="flex items-center justify-between text-white/60 text-sm mt-2 px-1">
+                <span>{state.input.trim().length} / 11+ required</span>
+                {!isValid && <span>Write at least 11 characters</span>}
+              </div>
+            </div>
+          ) : (
+            <div className="animate-slide-in-up text-center mt-6 max-w-prose px-4">
+              <p className="text-lg leading-relaxed break-words overflow-hidden font-medium text-orange-500/80">
+                {state.input}
+              </p>
+              <p className="text-sm text-white/60 mt-2">Your intention has been set</p>
+            </div>
+          )}
+
+          {!isSuccess && (
+            <button
+              onClick={submitDemo}
+              disabled={!isValid || isSubmitting}
+              className={cn(
+                'bg-white/10 border border-white/20 text-white px-6 py-3 rounded-lg text-lg cursor-pointer transition-all font-medium animate-slide-in-up delay-300',
+                (!isValid || isSubmitting) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/20 hover:border-white/30',
+              )}
+            >
+              Set Intention
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
