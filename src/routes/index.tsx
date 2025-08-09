@@ -3,18 +3,14 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useRef, useState, type ReactNode, type Ref } from 'react'
 import { PenLine, Loader2, Mail } from 'lucide-react'
 import { cn } from '../lib/utils'
+import { useServerFn } from '@tanstack/react-start'
 import { addToWaitlist } from '../lib/waitlist'
 import Flame from '@/components/flame'
 import { SquarePenIcon } from '@/components/ui/square-pen'
 import { ShieldCheckIcon } from '@/components/ui/shield-check'
 import { TimerIcon } from '@/components/ui/timer'
 import { RocketIcon } from '@/components/ui/rocket'
-import { SparklesIcon } from '@/components/ui/sparkles'
 import { CheckIcon } from '@/components/ui/check'
-import { SettingsGearIcon } from '@/components/ui/settings-gear'
-import { KeyboardIcon } from '@/components/ui/keyboard'
-import { ChartPieIcon } from '@/components/ui/chart-pie'
-import { FingerprintIcon } from '@/components/ui/fingerprint'
 
 export const Route = createFileRoute('/')({
   component: Landing,
@@ -312,36 +308,34 @@ function Waitlist() {
   const [phase, setPhase] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
 
-  // Ultra simple validation - just check if there's any text
-  const isValid = email.length > 3 // Just need some text to enable button
+  const addEmail = useServerFn(addToWaitlist)
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const isValid = emailRegex.test(email.trim())
   const submitting = phase === 'submitting'
   const success = phase === 'success'
   const error = phase === 'error'
 
-  // Debug logging every render
-  console.log('Waitlist render - Email length:', email.length, 'Email:', `"${email}"`, 'IsValid:', isValid, 'Submitting:', submitting)
-
   const submit = async (e?: React.FormEvent) => {
     e?.preventDefault()
     if (!isValid || submitting) return
-    
+
     setPhase('submitting')
     setErrorMessage('')
-    
+
     try {
-      const result = await addToWaitlist(email)
-      
-      if (result.success) {
+      const result = await addEmail({ data: email })
+      if (result?.success) {
         setPhase('success')
-        setEmail('') // Clear the email field
+        setEmail('')
       } else {
         setPhase('error')
-        setErrorMessage(result.error || 'Something went wrong. Please try again.')
+        setErrorMessage(result?.error || 'Something went wrong. Please try again.')
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error submitting email:', err)
       setPhase('error')
-      setErrorMessage('Something went wrong. Please try again.')
+      setErrorMessage(err?.message || 'Something went wrong. Please try again.')
     }
   }
 
@@ -361,6 +355,9 @@ function Waitlist() {
     <div className="space-y-3">
       <form
         onSubmit={submit}
+        action={addToWaitlist.url}
+        method="POST"
+        encType="multipart/form-data"
         className={cn(
           'relative overflow-hidden rounded-2xl bg-primary-foreground/5 transition-all',
           'shadow-lg hover:shadow-xl focus-within:shadow-2xl shadow-black/5 focus-within:shadow-black/10',
@@ -374,12 +371,12 @@ function Waitlist() {
             <Mail className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 size-4 text-primary-foreground/40" />
             <input
               id="email"
+              name="email"
               type="email"
               autoComplete="email"
               aria-invalid={email.length > 0 && !isValid}
               value={email}
               onChange={(e) => {
-                console.log('Input onChange:', e.target.value)
                 setEmail(e.target.value)
                 if (error) {
                   setPhase('idle')
@@ -405,7 +402,6 @@ function Waitlist() {
               opacity: (!isValid || submitting) ? 0.6 : 1
             }}
             className="inline-flex items-center justify-center rounded-xl px-5 py-3 font-semibold text-white transition-all duration-200 min-w-[12rem]"
-            onClick={() => console.log('Button clicked! IsValid:', isValid, 'Submitting:', submitting)}
           >
             {submitting ? (
               <>
@@ -417,7 +413,7 @@ function Waitlist() {
           </button>
         </div>
       </form>
-      
+
       {error && errorMessage && (
         <div className="flex items-center justify-center">
           <p className="text-red-500 text-sm font-medium text-center">

@@ -1,30 +1,30 @@
 {
-  "../../../../../~start/default-client-entry.tsx": {
-    "file": "assets/main-BWiheS66.js",
+  "../../../../~start/default-client-entry.tsx": {
+    "file": "assets/main-rAYL-TcK.js",
     "name": "main",
-    "src": "../../../../../~start/default-client-entry.tsx",
+    "src": "../../../../~start/default-client-entry.tsx",
     "isEntry": true,
     "dynamicImports": [
       "src/routes/index.tsx?tsr-split=component"
     ],
     "css": [
-      "assets/main-Cf15pgOt.css"
+      "assets/main-UUE27ZDB.css"
     ],
     "assets": [
-      "assets/app-CEJ9t8pj.css"
+      "assets/app-B53HnW2W.css"
     ]
   },
-  "C:/Users/Ana/Desktop/landingpage/intent-landing/src/styles/app.css": {
-    "file": "assets/app-CEJ9t8pj.css",
-    "src": "C:/Users/Ana/Desktop/landingpage/intent-landing/src/styles/app.css"
+  "/Users/sunnie/Documents/intent-landing/src/styles/app.css": {
+    "file": "assets/app-B53HnW2W.css",
+    "src": "/Users/sunnie/Documents/intent-landing/src/styles/app.css"
   },
   "src/routes/index.tsx?tsr-split=component": {
-    "file": "assets/index-gLAhhT9V.js",
+    "file": "assets/index-D-64FKtV.js",
     "name": "index",
     "src": "src/routes/index.tsx?tsr-split=component",
     "isDynamicEntry": true,
     "imports": [
-      "../../../../../~start/default-client-entry.tsx"
+      "../../../../~start/default-client-entry.tsx"
     ]
   }
 }
