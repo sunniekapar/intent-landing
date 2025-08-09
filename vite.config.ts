@@ -9,6 +9,7 @@ export default defineConfig({
     port: 4000,
   },
   plugins: [
+    tanstackStart({ target: 'netlify' }),
     tailwindcss(),
     tsConfigPaths(),
     tanstackStart({ customViteReactPlugin: true }),
