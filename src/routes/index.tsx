@@ -27,9 +27,15 @@ export const Route = createFileRoute('/')({
 })
 
 function Landing() {
+  const bottomRef = useRef<HTMLDivElement | null>(null)
+
   const openExtension = () => {
-    console.log('[Landing] Get Started button clicked')
-    console.log('Opening extension...')
+    // Smoothly scroll to the bottom waitlist section
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    } else if (typeof window !== 'undefined') {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
+    }
   }
 
   return (
@@ -68,7 +74,8 @@ function Landing() {
         <p className="text-lg sm:text-2xl text-muted-foreground max-w-3xl">
           Intent keeps you grounded by asking for your purpose before accessing any distracting website.
         </p>
-        <div className="mt-8">
+        <div className="mt-8 hidden">
+          {/*
           <button 
             onClick={openExtension}
             className="group relative inline-flex items-center justify-center overflow-hidden bg-orange-500 text-white px-8 py-4 rounded-xl text-lg sm:text-xl font-semibold transition-all duration-500 hover:bg-orange-600 shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40"
@@ -84,6 +91,7 @@ function Landing() {
               </svg>
             </span>
           </button>
+          */}
         </div>
       </div>
 
@@ -131,22 +139,16 @@ function Landing() {
         </div>
       </div>
 
-      <div className="text-center py-20">
-        <button 
-          onClick={openExtension}
-          className="group relative inline-flex items-center justify-center overflow-hidden bg-orange-500 text-white px-8 py-4 rounded-xl text-xl font-semibold transition-all duration-500 hover:bg-orange-600 shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40"
-        >
-          <span className="transition-all duration-300 group-hover:-translate-x-40 group-hover:opacity-0">
-            Let's get started
-          </span>
-          <span className="absolute inset-0 flex items-center justify-center transition-all duration-300 translate-x-40 opacity-0 group-hover:translate-x-0 group-hover:opacity-100">
-            <svg width="24" height="24" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M8.14645 3.14645C8.34171 2.95118 8.65829 2.95118 8.85355 3.14645L12.8536 7.14645C13.0488 7.34171 13.0488 7.65829 12.8536 7.85355L8.85355 11.8536C8.65829 12.0488 8.34171 12.0488 8.14645 11.8536C7.95118 11.6583 7.95118 11.3417 8.14645 11.1464L11.2929 8H2.5C2.22386 8 2 7.77614 2 7.5C2 7.22386 2.22386 7 2.5 7H11.2929L8.14645 3.85355C7.95118 3.65829 7.95118 3.34171 8.14645 3.14645Z"
-                fill="currentColor" fillRule="evenodd" clipRule="evenodd" />
-            </svg>
-          </span>
-        </button>
+      <div ref={bottomRef} className="text-center py-20 px-6">
+        <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-primary max-w-3xl mx-auto">
+          We’re putting the finishing touches on Intent to meet the latest Chrome Web Store requirements.
+          <span className="block mt-2 text-muted-foreground font-normal text-lg sm:text-xl">Get notified as soon as we’re live again.</span>
+        </p>
+
+        <div className="mt-8 max-w-2xl mx-auto">
+          <Waitlist />
+        </div>
+
         <div className="w-3/5 h-px bg-linear-to-r from-transparent via-orange-500/20 to-transparent mx-auto my-10"></div>
         <div className="text-muted-foreground text-sm pb-10">© 2025 Intent. All rights reserved.</div>
       </div>
@@ -294,5 +296,72 @@ function IntentionDemo() {
         </div>
       </div>
     </div>
+  )
+}
+
+function Waitlist() {
+  const [email, setEmail] = useState('')
+  const [phase, setPhase] = useState<'idle' | 'submitting' | 'success'>('idle')
+
+  const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  const submitting = phase === 'submitting'
+  const success = phase === 'success'
+
+  const submit = async (e?: React.FormEvent) => {
+    e?.preventDefault()
+    if (!isValid || submitting) return
+    setPhase('submitting')
+    try {
+      // TODO: send to your backend or service
+      await new Promise((r) => setTimeout(r, 900))
+      setPhase('success')
+    } catch (err) {
+      setPhase('idle')
+    }
+  }
+
+  if (success) {
+    return (
+      <div className="relative overflow-hidden rounded-2xl bg-primary/80 text-primary-foreground border border-primary-foreground/10 shadow-2xl">
+        <div className="absolute inset-0 bg-radial-[ellipse_80%_60%_at_50%_0%] from-primary to-transparent opacity-60" />
+        <div className="relative flex items-center justify-center gap-3 px-5 py-4">
+          <CheckIcon size={22} className="text-orange-400" />
+          <span className="text-base sm:text-lg font-medium">You’re on the list! We’ll email you when Intent is live.</span>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={submit} className="relative overflow-hidden rounded-2xl border border-primary-foreground/10 bg-primary-foreground/5 shadow-xl">
+      <div className="absolute inset-0 bg-radial-[ellipse_120%_80%_at_50%_-10%] from-orange-500/10 to-transparent pointer-events-none" />
+      <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-3 sm:p-4">
+        <label htmlFor="email" className="sr-only">Email</label>
+        <input
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@example.com"
+          className="flex-1 px-4 py-3 rounded-xl bg-background text-foreground placeholder-primary-foreground/40 border border-primary-foreground/15 focus:outline-none focus:border-orange-500/60 focus:ring-2 focus:ring-orange-500/30 shadow-inner"
+          required
+        />
+        <button
+          type="submit"
+          disabled={!isValid || submitting}
+          className={cn(
+            'inline-flex items-center justify-center rounded-xl px-5 py-3 font-semibold text-white bg-orange-500 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg shadow-orange-500/30'
+          )}
+        >
+          {submitting ? (
+            <>
+              <Loader2 className="mr-2 size-4 animate-spin" /> Adding…
+            </>
+          ) : (
+            'Join the waitlist'
+          )}
+        </button>
+      </div>
+    </form>
   )
 }
