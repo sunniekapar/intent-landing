@@ -1,0 +1,30 @@
+{
+  "../../../../~start/default-client-entry.tsx": {
+    "file": "assets/main-DD5bK4k5.js",
+    "name": "main",
+    "src": "../../../../~start/default-client-entry.tsx",
+    "isEntry": true,
+    "dynamicImports": [
+      "src/routes/index.tsx?tsr-split=component"
+    ],
+    "css": [
+      "assets/main-ucsu6BL9.css"
+    ],
+    "assets": [
+      "assets/app-B3-vyUUz.css"
+    ]
+  },
+  "/Users/sunnie/Documents/intent-landing/src/styles/app.css": {
+    "file": "assets/app-B3-vyUUz.css",
+    "src": "/Users/sunnie/Documents/intent-landing/src/styles/app.css"
+  },
+  "src/routes/index.tsx?tsr-split=component": {
+    "file": "assets/index-Baf4dADJ.js",
+    "name": "index",
+    "src": "src/routes/index.tsx?tsr-split=component",
+    "isDynamicEntry": true,
+    "imports": [
+      "../../../../~start/default-client-entry.tsx"
+    ]
+  }
+}
