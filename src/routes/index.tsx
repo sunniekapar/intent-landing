@@ -1,8 +1,9 @@
 import logo from '/logo2.png'
 import { createFileRoute } from '@tanstack/react-router'
-import { useRef, useState, type ReactNode, type Ref } from 'react'
-import { PenLine, Loader2 } from 'lucide-react'
+import { useEffect, useRef, useState, type ReactNode, type Ref } from 'react'
+import { PenLine, Loader2, Mail } from 'lucide-react'
 import { cn } from '../lib/utils'
+import { addToWaitlist } from '../lib/waitlist'
 import Flame from '@/components/flame'
 import { SquarePenIcon } from '@/components/ui/square-pen'
 import { ShieldCheckIcon } from '@/components/ui/shield-check'
@@ -28,27 +29,50 @@ export const Route = createFileRoute('/')({
 
 function Landing() {
   const bottomRef = useRef<HTMLDivElement | null>(null)
+  const headerCtaRef = useRef<HTMLButtonElement | null>(null)
 
-  const openExtension = () => {
-    // Smoothly scroll to the bottom waitlist section
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
-    } else if (typeof window !== 'undefined') {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
-    }
+  const handleGetExtensionClick = () => {
+    console.log('[Intent] Get Extension button clicked')
+    
+    // TODO: Add your custom action here when the Get Extension button is clicked
+    // Example actions you might want to add:
+    // - Open Chrome Web Store page
+    // - Show installation modal
+    // - Track analytics event
+    // - etc.
+    
+    // Current action: scroll to the absolute bottom of the page
+    if (typeof window === 'undefined') return
+    const scrollHeight =
+      document.documentElement?.scrollHeight || document.body.scrollHeight
+    window.scrollTo({ top: scrollHeight, behavior: 'smooth' })
   }
+
+  useEffect(() => {
+    const el = headerCtaRef.current
+    if (!el) return
+    const nativeHandler = () => {
+      console.log('[Intent] Native listener: Get Extension click captured')
+    }
+    el.addEventListener('click', nativeHandler, true)
+    return () => {
+      el.removeEventListener('click', nativeHandler, true)
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-background relative">
       <div className="fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md z-50 flex items-center justify-between px-8">
         <div className="flex items-center gap-3">
-          <div className="size-7 bg-orange-500 rounded-lg" />
+          <img src="/logo.png" alt="Intent logo" className="size-7 rounded-lg" />
           <div className="text-lg font-semibold text-primary">Intent</div>
         </div>
         <div className="hidden sm:flex items-center gap-6 text-sm text-muted-foreground">
           <button className="hover:text-primary transition-colors">FAQs</button>
           <button
-            onClick={openExtension}
+            ref={headerCtaRef}
+            onClickCapture={() => console.log('[Intent] Header Get Extension onClickCapture')}
+            onClick={handleGetExtensionClick}
             className="bg-orange-500 text-white px-4 py-2 font-medium shadow-sm shadow-orange-500/30 hover:bg-orange-600 active:scale-[100.5%] rounded-lg"
           >
             Get Extension
@@ -75,9 +99,10 @@ function Landing() {
           Intent keeps you grounded by asking for your purpose before accessing any distracting website.
         </p>
         <div className="mt-8 hidden">
-          {/*
+          {/* Note: This button is intentionally hidden. Remove the "hidden" class above to show it. */}
+          {/* Troubleshooting: If re-enabled and clicking does nothing, ensure no overlay captures the click. */}
           <button 
-            onClick={openExtension}
+            onClick={handleGetExtensionClick}
             className="group relative inline-flex items-center justify-center overflow-hidden bg-orange-500 text-white px-8 py-4 rounded-xl text-lg sm:text-xl font-semibold transition-all duration-500 hover:bg-orange-600 shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40"
           >
             <span className="transition-all duration-300 group-hover:-translate-x-40 group-hover:opacity-0">
@@ -91,7 +116,6 @@ function Landing() {
               </svg>
             </span>
           </button>
-          */}
         </div>
       </div>
 
@@ -116,22 +140,6 @@ function Landing() {
           <Feature
             renderIcon={(ref) => <RocketIcon ref={ref as Ref<any>} size={56} />}
             title="Build better habits"
-          />
-          <Feature
-            renderIcon={(ref) => <SettingsGearIcon ref={ref as Ref<any>} size={56} />}
-            title="Flexible customization"
-          />
-          <Feature
-            renderIcon={(ref) => <SparklesIcon ref={ref as Ref<any>} size={56} />}
-            title="Delightful experience"
-          />
-          <Feature
-            renderIcon={(ref) => <ChartPieIcon ref={ref as Ref<any>} size={56} />}
-            title="Actionable insights"
-          />
-          <Feature
-            renderIcon={(ref) => <FingerprintIcon ref={ref as Ref<any>} size={56} />}
-            title="Privacy‑first design"
           />
           {/* Extras available to swap in later */}
           {/* <Feature icon={<SparklesIcon size={28} />} title="Delightful UX" /> */}
@@ -301,22 +309,39 @@ function IntentionDemo() {
 
 function Waitlist() {
   const [email, setEmail] = useState('')
-  const [phase, setPhase] = useState<'idle' | 'submitting' | 'success'>('idle')
+  const [phase, setPhase] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
+  const [errorMessage, setErrorMessage] = useState('')
 
-  const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  // Ultra simple validation - just check if there's any text
+  const isValid = email.length > 3 // Just need some text to enable button
   const submitting = phase === 'submitting'
   const success = phase === 'success'
+  const error = phase === 'error'
+
+  // Debug logging every render
+  console.log('Waitlist render - Email length:', email.length, 'Email:', `"${email}"`, 'IsValid:', isValid, 'Submitting:', submitting)
 
   const submit = async (e?: React.FormEvent) => {
     e?.preventDefault()
     if (!isValid || submitting) return
+    
     setPhase('submitting')
+    setErrorMessage('')
+    
     try {
-      // TODO: send to your backend or service
-      await new Promise((r) => setTimeout(r, 900))
-      setPhase('success')
+      const result = await addToWaitlist(email)
+      
+      if (result.success) {
+        setPhase('success')
+        setEmail('') // Clear the email field
+      } else {
+        setPhase('error')
+        setErrorMessage(result.error || 'Something went wrong. Please try again.')
+      }
     } catch (err) {
-      setPhase('idle')
+      console.error('Error submitting email:', err)
+      setPhase('error')
+      setErrorMessage('Something went wrong. Please try again.')
     }
   }
 
@@ -333,35 +358,73 @@ function Waitlist() {
   }
 
   return (
-    <form onSubmit={submit} className="relative overflow-hidden rounded-2xl border border-primary-foreground/10 bg-primary-foreground/5 shadow-xl">
-      <div className="absolute inset-0 bg-radial-[ellipse_120%_80%_at_50%_-10%] from-orange-500/10 to-transparent pointer-events-none" />
-      <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-3 sm:p-4">
-        <label htmlFor="email" className="sr-only">Email</label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@example.com"
-          className="flex-1 px-4 py-3 rounded-xl bg-background text-foreground placeholder-primary-foreground/40 border border-primary-foreground/15 focus:outline-none focus:border-orange-500/60 focus:ring-2 focus:ring-orange-500/30 shadow-inner"
-          required
-        />
-        <button
-          type="submit"
-          disabled={!isValid || submitting}
-          className={cn(
-            'inline-flex items-center justify-center rounded-xl px-5 py-3 font-semibold text-white bg-orange-500 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg shadow-orange-500/30'
-          )}
-        >
-          {submitting ? (
-            <>
-              <Loader2 className="mr-2 size-4 animate-spin" /> Adding…
-            </>
-          ) : (
-            'Join the waitlist'
-          )}
-        </button>
-      </div>
-    </form>
+    <div className="space-y-3">
+      <form
+        onSubmit={submit}
+        className={cn(
+          'relative overflow-hidden rounded-2xl bg-primary-foreground/5 transition-all',
+          'shadow-lg hover:shadow-xl focus-within:shadow-2xl shadow-black/5 focus-within:shadow-black/10',
+          error && 'ring-2 ring-red-500/20'
+        )}
+      >
+        <div className="absolute inset-0 bg-radial-[ellipse_120%_80%_at_50%_-10%] from-orange-500/10 to-transparent pointer-events-none" />
+        <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-3 sm:p-4">
+          <label htmlFor="email" className="sr-only">Email</label>
+          <div className="relative flex-1">
+            <Mail className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 size-4 text-primary-foreground/40" />
+            <input
+              id="email"
+              type="email"
+              autoComplete="email"
+              aria-invalid={email.length > 0 && !isValid}
+              value={email}
+              onChange={(e) => {
+                console.log('Input onChange:', e.target.value)
+                setEmail(e.target.value)
+                if (error) {
+                  setPhase('idle')
+                  setErrorMessage('')
+                }
+              }}
+              placeholder="you@example.com"
+              className={cn(
+                'w-full rounded-xl bg-background text-foreground placeholder-primary-foreground/40',
+                'px-11 py-3 shadow-inner',
+                'focus:outline-none',
+                email.length > 0 && !isValid && 'ring-2 ring-red-500/20'
+              )}
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={!isValid || submitting}
+            style={{
+              backgroundColor: (!isValid || submitting) ? '#9CA3AF' : '#F97316',
+              cursor: (!isValid || submitting) ? 'not-allowed' : 'pointer',
+              opacity: (!isValid || submitting) ? 0.6 : 1
+            }}
+            className="inline-flex items-center justify-center rounded-xl px-5 py-3 font-semibold text-white transition-all duration-200 min-w-[12rem]"
+            onClick={() => console.log('Button clicked! IsValid:', isValid, 'Submitting:', submitting)}
+          >
+            {submitting ? (
+              <>
+                <Loader2 className="mr-2 size-4 animate-spin" /> Adding…
+              </>
+            ) : (
+              'Join the waitlist'
+            )}
+          </button>
+        </div>
+      </form>
+      
+      {error && errorMessage && (
+        <div className="flex items-center justify-center">
+          <p className="text-red-500 text-sm font-medium text-center">
+            {errorMessage}
+          </p>
+        </div>
+      )}
+    </div>
   )
 }
