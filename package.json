@@ -7,6 +7,7 @@
     "dev": "vite dev",
     "build": "vite build"
   },
+  "packageManager": "npm@10.9.3",
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -20,7 +21,6 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.537.0",
     "motion": "^12.23.12",
-    "pnpm": "^10.14.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "tailwind-merge": "^3.3.1",
