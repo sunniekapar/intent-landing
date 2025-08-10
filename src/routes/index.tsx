@@ -154,7 +154,10 @@ function Landing() {
         </div>
 
         <div className="w-3/5 h-px bg-linear-to-r from-transparent via-orange-500/20 to-transparent mx-auto my-10"></div>
-        <div className="text-muted-foreground text-sm pb-10">© 2025 Intent. All rights reserved.</div>
+        <div className="text-muted-foreground text-sm pb-10">
+          © 2025 Intent. All rights reserved.
+          <a href="/privacy" className="underline hover:text-primary ml-2">Privacy</a>
+        </div>
       </div>
     </div>
   )
