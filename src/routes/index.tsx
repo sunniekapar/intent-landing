@@ -64,8 +64,9 @@ function Landing() {
           <div className="text-lg font-semibold text-primary">Intent</div>
         </div>
         <div className="hidden sm:flex items-center gap-6 text-sm text-muted-foreground">
-          <button className="hover:text-primary transition-colors"><Link to="/pricing">Pricing</Link></button>
+          {/* <button className="hover:text-primary transition-colors"><Link to="/pricing">Pricing</Link></button> */}
           <button
+            type="button"
             ref={headerCtaRef}
             onClickCapture={() => console.log('[Intent] Header Get Extension onClickCapture')}
             onClick={handleGetExtensionClick}
