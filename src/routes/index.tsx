@@ -1,5 +1,5 @@
 import logo from '/logo2.png'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useEffect, useRef, useState, type ReactNode, type Ref } from 'react'
 import { PenLine, Loader2, Mail } from 'lucide-react'
 import { cn } from '../lib/utils'
@@ -64,7 +64,7 @@ function Landing() {
           <div className="text-lg font-semibold text-primary">Intent</div>
         </div>
         <div className="hidden sm:flex items-center gap-6 text-sm text-muted-foreground">
-          <button className="hover:text-primary transition-colors">FAQs</button>
+          <button className="hover:text-primary transition-colors"><Link to="/pricing">Pricing</Link></button>
           <button
             ref={headerCtaRef}
             onClickCapture={() => console.log('[Intent] Header Get Extension onClickCapture')}
