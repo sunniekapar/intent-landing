@@ -18,7 +18,6 @@ function AuthCallback() {
         const isFromExtension = urlParams.get('extension') === 'true';
         const provider = urlParams.get('provider');
         
-        // Handle OAuth provider authentication
         if (provider) {
           // Initiate OAuth flow
           const { error } = await supabase.auth.signInWithOAuth({
@@ -34,34 +33,31 @@ function AuthCallback() {
           return; // OAuth will redirect back to this page
         }
 
-        // Get the session from the URL (after OAuth redirect or email confirmation)
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
+          console.error('Session error:', error);
+          if (isFromExtension) {
+            setStatus('success');
+            setMessage('Authentication completed! Opening extension...');
+            await openExtension();
+            return;
+          }
           throw error;
         }
 
-        if (!session) {
-          // Check if we have auth parameters in the URL hash
-          const hashParams = new URLSearchParams(window.location.hash.substring(1));
-          const accessToken = hashParams.get('access_token');
-          
-          if (accessToken) {
-            // Set the session from the URL parameters
-            const { data: { session: newSession }, error: sessionError } = await supabase.auth.setSession({
-              access_token: accessToken,
-              refresh_token: hashParams.get('refresh_token') || '',
-            });
-            
-            if (sessionError) throw sessionError;
-            if (!newSession) throw new Error('Failed to establish session');
-            
-            await handleSuccessfulAuth(newSession, isFromExtension);
-          } else {
-            throw new Error('No session found');
-          }
-        } else {
+        if (session) {
           await handleSuccessfulAuth(session, isFromExtension);
+        } else {
+          if (isFromExtension) {
+            setStatus('success');
+            setMessage('Authentication completed! Opening extension...');
+            await openExtension();
+          } else {
+            throw new Error('No session found. Please try logging in again.');
+          }
         }
       } catch (error) {
         console.error('Auth callback error:', error);
@@ -73,19 +69,32 @@ function AuthCallback() {
     handleAuthCallback();
   }, [navigate]);
 
+  const openExtension = async () => {
+    try {
+      if (typeof chrome !== 'undefined' && chrome.runtime) {
+        const extensionId = import.meta.env.VITE_EXTENSION_ID || '*';
+        chrome.runtime.sendMessage(extensionId, {
+          type: 'OPEN_POPUP'
+        });
+      }
+    } catch (error) {
+      console.log('Could not automatically open extension:', error);
+    }
+    
+    setTimeout(() => {
+      setMessage('Authentication successful! Click the Intent extension icon in your browser toolbar to continue.');
+    }, 2000);
+  };
+
   const handleSuccessfulAuth = async (session: any, isFromExtension: boolean) => {
     setStatus('success');
     setMessage('Authentication successful!');
 
     if (isFromExtension) {
-      // Send session to extension
       try {
-        // Get all extension IDs that might need the session
-        // In production, you'd have a specific extension ID
         const extensionId = import.meta.env.VITE_EXTENSION_ID || '*';
         
-        // Post message to extension
-        if (chrome?.runtime?.sendMessage) {
+        if (typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
           await chrome.runtime.sendMessage(extensionId, {
             type: 'AUTH_SUCCESS',
             session: {
@@ -94,8 +103,8 @@ function AuthCallback() {
               user: session.user,
             }
           });
+          setMessage('Authentication successful! Opening extension...');
         } else {
-          // Fallback: Use postMessage for communication
           window.postMessage({
             type: 'AUTH_SUCCESS',
             session: {
@@ -105,19 +114,15 @@ function AuthCallback() {
             }
           }, '*');
         }
-
-        setMessage('Authentication successful! You can close this tab and return to the extension.');
         
-        // Auto-close after a delay
-        setTimeout(() => {
-          window.close();
-        }, 3000);
+        // Try to open the extension
+        await openExtension();
+        
       } catch (error) {
         console.error('Failed to send session to extension:', error);
-        setMessage('Authentication successful! Please return to the extension.');
+        setMessage('Authentication successful! Click the Intent extension icon to continue.');
       }
     } else {
-      // Regular web app flow - redirect to dashboard or home
       setTimeout(() => {
         navigate({ to: '/' });
       }, 1500);
@@ -142,6 +147,19 @@ function AuthCallback() {
           <>
             <div className="text-green-500 text-5xl mb-4">✓</div>
             <p className="text-white text-lg">{message}</p>
+            {message.includes('extension icon') && (
+              <div className="mt-6 space-y-4">
+                <p className="text-white/60 text-sm">
+                  The extension should open automatically, or you can click the extension icon in your browser toolbar.
+                </p>
+                <button 
+                  onClick={() => window.close()}
+                  className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
+                >
+                  Close This Tab
+                </button>
+              </div>
+            )}
           </>
         )}
         
