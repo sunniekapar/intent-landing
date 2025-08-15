@@ -9,9 +9,9 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
     onSubscriptionCreated: async (data: any) => {
       console.log('Subscription created:', data)
       
-      const userId = data.customer?.external_id
+      const userId = data.customer?.externalId
       if (!userId) {
-        console.error('No external_id in subscription created webhook')
+        console.error('No externalId in subscription created webhook')
         return
       }
       
@@ -22,8 +22,8 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
           polar_subscription_id: data.subscription.id,
           polar_customer_email: data.customer.email,
           subscription_status: 'active',
-          current_period_start: data.subscription.current_period_start,
-          current_period_end: data.subscription.current_period_end,
+          current_period_start: data.subscription.currentPeriodStart,
+          current_period_end: data.subscription.currentPeriodEnd,
         })
         .eq('id', userId)
       
@@ -35,9 +35,9 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
     onSubscriptionActive: async (data: any) => {
       console.log('Subscription active (renewal):', data)
       
-      const userId = data.customer?.external_id
+      const userId = data.customer?.externalId
       if (!userId) {
-        console.error('No external_id in subscription active webhook')
+        console.error('No externalId in subscription active webhook')
         return
       }
       
@@ -45,8 +45,8 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
         .from('profiles')
         .update({
           subscription_status: 'active',
-          current_period_start: data.subscription.current_period_start,
-          current_period_end: data.subscription.current_period_end,
+          current_period_start: data.subscription.currentPeriodStart,
+          current_period_end: data.subscription.currentPeriodEnd,
         })
         .eq('id', userId)
       
@@ -58,9 +58,9 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
     onSubscriptionCanceled: async (data: any) => {
       console.log('Subscription canceled:', data)
       
-      const userId = data.customer?.external_id
+      const userId = data.customer?.externalId
       if (!userId) {
-        console.error('No external_id in subscription canceled webhook')
+        console.error('No externalId in subscription canceled webhook')
         return
       }
       
@@ -79,9 +79,9 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
     onSubscriptionRevoked: async (data: any) => {
       console.log('Subscription revoked (immediate cancellation):', data)
       
-      const userId = data.customer?.external_id
+      const userId = data.customer?.externalId
       if (!userId) {
-        console.error('No external_id in subscription revoked webhook')
+        console.error('No externalId in subscription revoked webhook')
         return
       }
       
@@ -101,9 +101,9 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
     onSubscriptionUncanceled: async (data: any) => {
       console.log('Subscription uncanceled:', data)
       
-      const userId = data.customer?.external_id
+      const userId = data.customer?.externalId
       if (!userId) {
-        console.error('No external_id in subscription uncanceled webhook')
+        console.error('No externalId in subscription uncanceled webhook')
         return
       }
       
