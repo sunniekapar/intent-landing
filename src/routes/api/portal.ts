@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabase'
 
 export const ServerRoute = createServerFileRoute('/api/portal').methods({
   GET: CustomerPortal({
+    server: "sandbox",
     accessToken: process.env.POLAR_ACCESS_TOKEN!,
     getCustomerId: async (request: Request) => {
       const url = new URL(request.url)
