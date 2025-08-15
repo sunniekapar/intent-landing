@@ -49,44 +49,61 @@ function PrivacyPage() {
 
         <section className="space-y-6 leading-relaxed text-foreground/90">
           <p>
-            Your privacy matters. This page explains what information Intent may collect, how we use it,
-            and the choices you have. We design Intent to minimize data collection and keep everything on your device whenever possible.
+          At Intent, we believe you deserve tools that help you focus without compromising your privacy. We do not sell your data, track your browsing history, or create profiles about you. The extension has been designed so that as much as possible happens directly on your device, and when limited processing outside your device is necessary, no information is ever sent that could identify you personally.
           </p>
 
           <div>
-            <h2 className="text-xl font-semibold text-primary mb-2">Information We Collect</h2>
+            <h2 className="text-xl font-semibold text-primary mb-2">Information We Process During Use</h2>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Usage intentions you enter within the extension (stored locally in your browser whenever possible).</li>
-              <li>Email address if you join our waitlist on the website.</li>
+              <p>When you use Intent, the extension may temporarily read certain information from the page you are currently viewing. This information consists primarily of page metadata extracted from the active tab’s DOM—such as titles or headings—together with the intention statement you entered. This data is processed only in your browser’s memory and, when needed, sent via OpenRouter to an AI model for analysis to check whether your current activity aligns with your stated intention. We never send your name, email, account details, or any other identifier alongside this content. The API receives only the relevant page content and your intention statement, with no way to link it back to you. While OpenRouter does not retain requests permanently, certain third-party AI models available through their service may store data temporarily for quality assurance; however, the data we send contains nothing that could identify you.</p>
             </ul>
           </div>
 
           <div>
-            <h2 className="text-xl font-semibold text-primary mb-2">How We Use Information</h2>
+            <h2 className="text-xl font-semibold text-primary mb-2">Data We Store for Your Settings</h2>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Provide and improve Intent’s features and user experience.</li>
-              <li>Send product updates if you opt-in via the waitlist.</li>
+              <p>To provide a consistent and personalized experience, Intent stores your blocked site list and enabled settings in our secure database. This allows the extension to apply your blocking preferences every time you browse, regardless of device restarts or browser sessions. The intention statements you enter are not stored on our servers—they are kept only in the local cache of your Chrome extension, ensuring that your goals remain on your device alone. Your email address is collected solely for authentication, serving as the only identifier that allows us to load your settings and enforce your blocking rules.</p>
             </ul>
           </div>
 
           <div>
-            <h2 className="text-xl font-semibold text-primary mb-2">Data Retention</h2>
-            <p>We retain information only as long as necessary to deliver the service or as required by law.</p>
+            <h2 className="text-xl font-semibold text-primary mb-2">Waitlist Information</h2>
+            <p>Before public release, a waitlist on our separate website was used to collect email addresses for early launch notifications. These addresses are stored in our database and will be deleted when the waitlist is retired. They are not used for marketing or unrelated communication.</p>
           </div>
 
           <div>
-            <h2 className="text-xl font-semibold text-primary mb-2">Your Choices</h2>
+            <h2 className="text-xl font-semibold text-primary mb-2">Analytics and Tracking</h2>
             <ul className="list-disc pl-6 space-y-2">
-              <li>You can request deletion of your waitlist email at any time.</li>
-              <li>You can uninstall the extension to stop any local data collection.</li>
+              <p>At present, Intent does not use analytics or tracking tools such as Google Analytics. If we introduce analytics in the future, we will update this policy in advance so you can make an informed choice.</p>
             </ul>
           </div>
+
+
+          <div>
+            <h2 className="text-xl font-semibold text-primary mb-2">Why We Need Certain Chrome Permissions</h2>
+            <ul className="list-disc pl-6 space-y-2">
+              <p>Intent requires specific Chrome permissions to function effectively:</p>
+              <li>
+                <strong>storage</strong>: Used to keep your intention statements locally in the extension’s cache and to store your site block list and preferences so your settings are preserved between sessions.
+              </li>
+              <li>
+                <strong>activeTab</strong>: Ensures we only access and process content from the tab you are actively viewing when you trigger the extension, never from other tabs.
+              </li>
+              <li>
+                <strong>scripting</strong>: Enables us to inject the focus overlay and blocking interface directly into the page you are viewing, allowing the extension to limit access to distracting sites until you confirm your intention.
+              </li>
+              <li>
+                <strong>tabs</strong>: Allows us to read basic tab metadata, such as the URL and title, to enforce your rules, and to open or close tabs when redirecting you or displaying your dashboard.
+              </li>
+            </ul>
+          </div>
+
 
           <div>
             <h2 className="text-xl font-semibold text-primary mb-2">Contact Us</h2>
             <p className="flex items-center gap-2">
               <Mail className="size-4" />
-              <span>Questions? Email us at <a className="underline hover:text-primary" href="mailto:hello@useintent.app">hello@useintent.app</a>.</span>
+              <span>Questions? Email us at <a className="underline hover:text-primary" href="mailto:intentextension@gmail.com">intentextension@gmail.com</a>.</span>
             </p>
           </div>
         </section>
