@@ -21,11 +21,8 @@ function PricingPage() {
   const headerCtaRef = useRef<HTMLButtonElement | null>(null)
   
   const handleGetExtensionClick = () => {
-    console.log('[Intent] Get Extension button clicked')
-    if (typeof window === 'undefined') return
-    const scrollHeight =
-      document.documentElement?.scrollHeight || document.body.scrollHeight
-    window.scrollTo({ top: scrollHeight, behavior: 'smooth' })
+    //TODO: Change to actual extension id when in prod
+    window.open('https://chrome.google.com/webstore/detail/ehfoddcbmgdfbdlkcockblbjcjakibio', '_blank')
   }
 
   return (

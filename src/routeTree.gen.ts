@@ -8,13 +8,26 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createServerRootRoute } from '@tanstack/react-start/server'
+
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SubscriptionSuccessRouteImport } from './routes/subscription-success'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as AuthCallbackRouteImport } from './routes/auth-callback'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { ServerRoute as ApiPortalServerRouteImport } from './routes/api/portal'
+import { ServerRoute as ApiCheckoutServerRouteImport } from './routes/api/checkout'
+import { ServerRoute as ApiWebhookPolarServerRouteImport } from './routes/api/webhook/polar'
 
+const rootServerRouteImport = createServerRootRoute()
+
+const SubscriptionSuccessRoute = SubscriptionSuccessRouteImport.update({
+  id: '/subscription-success',
+  path: '/subscription-success',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -40,6 +53,21 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPortalServerRoute = ApiPortalServerRouteImport.update({
+  id: '/api/portal',
+  path: '/api/portal',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
+const ApiCheckoutServerRoute = ApiCheckoutServerRouteImport.update({
+  id: '/api/checkout',
+  path: '/api/checkout',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
+const ApiWebhookPolarServerRoute = ApiWebhookPolarServerRouteImport.update({
+  id: '/api/webhook/polar',
+  path: '/api/webhook/polar',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +75,7 @@ export interface FileRoutesByFullPath {
   '/auth-callback': typeof AuthCallbackRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/subscription-success': typeof SubscriptionSuccessRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +83,7 @@ export interface FileRoutesByTo {
   '/auth-callback': typeof AuthCallbackRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/subscription-success': typeof SubscriptionSuccessRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +92,33 @@ export interface FileRoutesById {
   '/auth-callback': typeof AuthCallbackRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/subscription-success': typeof SubscriptionSuccessRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/auth-callback' | '/pricing' | '/privacy'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/auth-callback'
+    | '/pricing'
+    | '/privacy'
+    | '/subscription-success'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/auth-callback' | '/pricing' | '/privacy'
-  id: '__root__' | '/' | '/auth' | '/auth-callback' | '/pricing' | '/privacy'
+  to:
+    | '/'
+    | '/auth'
+    | '/auth-callback'
+    | '/pricing'
+    | '/privacy'
+    | '/subscription-success'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/auth-callback'
+    | '/pricing'
+    | '/privacy'
+    | '/subscription-success'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,10 +127,47 @@ export interface RootRouteChildren {
   AuthCallbackRoute: typeof AuthCallbackRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
+  SubscriptionSuccessRoute: typeof SubscriptionSuccessRoute
+}
+export interface FileServerRoutesByFullPath {
+  '/api/checkout': typeof ApiCheckoutServerRoute
+  '/api/portal': typeof ApiPortalServerRoute
+  '/api/webhook/polar': typeof ApiWebhookPolarServerRoute
+}
+export interface FileServerRoutesByTo {
+  '/api/checkout': typeof ApiCheckoutServerRoute
+  '/api/portal': typeof ApiPortalServerRoute
+  '/api/webhook/polar': typeof ApiWebhookPolarServerRoute
+}
+export interface FileServerRoutesById {
+  __root__: typeof rootServerRouteImport
+  '/api/checkout': typeof ApiCheckoutServerRoute
+  '/api/portal': typeof ApiPortalServerRoute
+  '/api/webhook/polar': typeof ApiWebhookPolarServerRoute
+}
+export interface FileServerRouteTypes {
+  fileServerRoutesByFullPath: FileServerRoutesByFullPath
+  fullPaths: '/api/checkout' | '/api/portal' | '/api/webhook/polar'
+  fileServerRoutesByTo: FileServerRoutesByTo
+  to: '/api/checkout' | '/api/portal' | '/api/webhook/polar'
+  id: '__root__' | '/api/checkout' | '/api/portal' | '/api/webhook/polar'
+  fileServerRoutesById: FileServerRoutesById
+}
+export interface RootServerRouteChildren {
+  ApiCheckoutServerRoute: typeof ApiCheckoutServerRoute
+  ApiPortalServerRoute: typeof ApiPortalServerRoute
+  ApiWebhookPolarServerRoute: typeof ApiWebhookPolarServerRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/subscription-success': {
+      id: '/subscription-success'
+      path: '/subscription-success'
+      fullPath: '/subscription-success'
+      preLoaderRoute: typeof SubscriptionSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -118,6 +205,31 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+declare module '@tanstack/react-start/server' {
+  interface ServerFileRoutesByPath {
+    '/api/portal': {
+      id: '/api/portal'
+      path: '/api/portal'
+      fullPath: '/api/portal'
+      preLoaderRoute: typeof ApiPortalServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+    '/api/checkout': {
+      id: '/api/checkout'
+      path: '/api/checkout'
+      fullPath: '/api/checkout'
+      preLoaderRoute: typeof ApiCheckoutServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+    '/api/webhook/polar': {
+      id: '/api/webhook/polar'
+      path: '/api/webhook/polar'
+      fullPath: '/api/webhook/polar'
+      preLoaderRoute: typeof ApiWebhookPolarServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+  }
+}
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -125,7 +237,16 @@ const rootRouteChildren: RootRouteChildren = {
   AuthCallbackRoute: AuthCallbackRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
+  SubscriptionSuccessRoute: SubscriptionSuccessRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+const rootServerRouteChildren: RootServerRouteChildren = {
+  ApiCheckoutServerRoute: ApiCheckoutServerRoute,
+  ApiPortalServerRoute: ApiPortalServerRoute,
+  ApiWebhookPolarServerRoute: ApiWebhookPolarServerRoute,
+}
+export const serverRouteTree = rootServerRouteImport
+  ._addFileChildren(rootServerRouteChildren)
+  ._addFileTypes<FileServerRouteTypes>()
