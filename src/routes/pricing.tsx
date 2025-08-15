@@ -61,12 +61,12 @@ function PricingPage() {
             Simple, transparent pricing
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Start with our free trial, then upgrade when you're ready
+            Start with a 2-week free trial, no credit card required
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          <div className="relative">
+        <div className="grid grid-cols-1 gap-8 max-w-sm mx-auto">
+          {/* <div className="relative">
             <div className="bg-gray-100 rounded-[18px] p-0.5 pt-2 shadow-lg">
               <div className="px-4 py-2">
                 <h2 className="text-lg font-medium text-gray-500">Starter</h2>
@@ -111,12 +111,12 @@ function PricingPage() {
                 </button>
               </div>
             </div>
-          </div>
+          </div> */}
 
           <div className="relative">
             <div className="bg-gradient-to-br from-orange-400 via-orange-500 to-orange-600 rounded-[18px] p-0.5 pt-2 shadow-lg">
-              <div className="px-4 py-2">
-                <h2 className="text-lg font-medium text-white">Professional</h2>
+              <div className="px-4 pb-2">
+                <h2 className="text-lg font-medium text-white">Premium</h2>
               </div>
               <div className="bg-white rounded-2xl px-4 pt-6 pb-6 shadow-md">
                 <div className="mb-6">
@@ -128,12 +128,8 @@ function PricingPage() {
                 </div>
                 
                 <div className="mb-6">
-                  <p className="text-sm font-medium text-gray-900 mb-4">Our Professional plan includes</p>
+                  <p className="text-sm font-medium text-gray-900 mb-4">Our Premium plan includes</p>
                   <ul className="space-y-3">
-                    <li className="flex items-start gap-3">
-                      <Check className="size-4 text-orange-500 mt-1 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">Everything in Starter</span>
-                    </li>
                     <li className="flex items-start gap-3">
                       <Check className="size-4 text-orange-500 mt-1 flex-shrink-0" />
                       <span className="text-gray-700 text-sm">Advanced analytics dashboard</span>
@@ -160,10 +156,15 @@ function PricingPage() {
                 <button 
                   type="button"
                   onClick={handleGetExtensionClick}
-                  className="w-full inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl font-medium transition-all shadow"
+                  className="group w-full inline-flex items-center justify-center bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl font-medium transition-all shadow"
                 >
-                  Get all-access
-                  <ArrowUpRight className="size-4" />
+                  <span>Start 2 Week Free Trial</span>
+                  <div className="relative ml-2 size-4 overflow-hidden">
+                    <div className="absolute transition-all duration-200 group-hover:-translate-y-4 group-hover:translate-x-3">
+                      <ArrowUpRight className="size-4" />
+                      <ArrowUpRight className="size-4 -translate-x-3" />
+                    </div>
+                  </div>
                 </button>
               </div>
             </div>
