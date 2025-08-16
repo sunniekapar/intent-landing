@@ -6,7 +6,7 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
   POST: Webhooks({
     webhookSecret: process.env.POLAR_WEBHOOK_SECRET!,
     
-    onSubscriptionCreated: async (data: any) => {
+    onSubscriptionCreated: async ({ data }: any) => {
       console.log('Subscription created:', data)
       
       const userId = data.customer?.externalId
@@ -19,11 +19,11 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
         .from('profiles')
         .update({
           polar_customer_id: data.customer.id,
-          polar_subscription_id: data.subscription.id,
+          polar_subscription_id: data.id,
           polar_customer_email: data.customer.email,
           subscription_status: 'active',
-          current_period_start: data.subscription.currentPeriodStart,
-          current_period_end: data.subscription.currentPeriodEnd,
+          current_period_start: data.currentPeriodStart,
+          current_period_end: data.currentPeriodEnd,
         })
         .eq('id', userId)
       
@@ -32,7 +32,7 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
       }
     },
     
-    onSubscriptionActive: async (data: any) => {
+    onSubscriptionActive: async ({ data }: any) => {
       console.log('Subscription active (renewal):', data)
       
       const userId = data.customer?.externalId
@@ -45,8 +45,8 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
         .from('profiles')
         .update({
           subscription_status: 'active',
-          current_period_start: data.subscription.currentPeriodStart,
-          current_period_end: data.subscription.currentPeriodEnd,
+          current_period_start: data.currentPeriodStart,
+          current_period_end: data.currentPeriodEnd,
         })
         .eq('id', userId)
       
@@ -55,7 +55,7 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
       }
     },
     
-    onSubscriptionCanceled: async (data: any) => {
+    onSubscriptionCanceled: async ({ data }: any) => {
       console.log('Subscription canceled:', data)
       
       const userId = data.customer?.externalId
@@ -76,7 +76,7 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
       }
     },
     
-    onSubscriptionRevoked: async (data: any) => {
+    onSubscriptionRevoked: async ({ data }: any) => {
       console.log('Subscription revoked (immediate cancellation):', data)
       
       const userId = data.customer?.externalId
@@ -98,7 +98,7 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
       }
     },
     
-    onSubscriptionUncanceled: async (data: any) => {
+    onSubscriptionUncanceled: async ({ data }: any) => {
       console.log('Subscription uncanceled:', data)
       
       const userId = data.customer?.externalId
