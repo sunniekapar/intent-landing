@@ -16,6 +16,10 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
   }
 })
 
+// theres a weird edgecase that if the user refreshes the checkout link then the email / userId does not persist
+// and polar has no way to know which user sent the request and how to update it
+// right now not really necessary to handle that edge case but leaving this here
+// we should make it so that if there is no user email provided then we have to make them sign in to their intent account so we can attach the user to the checkout details in checkout.ts
 export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
   POST: Webhooks({
     webhookSecret: process.env.POLAR_WEBHOOK_SECRET!,
