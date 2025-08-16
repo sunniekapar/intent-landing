@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { supabase } from '../lib/supabase';
 
+declare const chrome: any;
+
 export const Route = createFileRoute('/auth-callback')({
   component: AuthCallback,
 });
@@ -16,48 +18,20 @@ function AuthCallback() {
       try {
         const urlParams = new URLSearchParams(window.location.search);
         const isFromExtension = urlParams.get('extension') === 'true';
-        const provider = urlParams.get('provider');
-        
-        if (provider) {
-          // Initiate OAuth flow
-          const { error } = await supabase.auth.signInWithOAuth({
-            provider: provider as any,
-            options: {
-              redirectTo: `${window.location.origin}/auth-callback${isFromExtension ? '?extension=true' : ''}`
-            }
-          });
-          
-          if (error) {
-            throw error;
-          }
-          return; // OAuth will redirect back to this page
-        }
-
-        await new Promise(resolve => setTimeout(resolve, 1000));
         
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
           console.error('Session error:', error);
-          if (isFromExtension) {
-            setStatus('success');
-            setMessage('Authentication completed! Opening extension...');
-            await openExtension();
-            return;
-          }
           throw error;
         }
-
+        
         if (session) {
+          console.log('Session found:', session.user?.email);
           await handleSuccessfulAuth(session, isFromExtension);
         } else {
-          if (isFromExtension) {
-            setStatus('success');
-            setMessage('Authentication completed! Opening extension...');
-            await openExtension();
-          } else {
-            throw new Error('No session found. Please try logging in again.');
-          }
+          setStatus('error');
+          setMessage('Please check your email for the confirmation link to complete signup.');
         }
       } catch (error) {
         console.error('Auth callback error:', error);
@@ -70,20 +44,11 @@ function AuthCallback() {
   }, [navigate]);
 
   const openExtension = async () => {
-    try {
-      if (typeof chrome !== 'undefined' && chrome.runtime) {
-        const extensionId = import.meta.env.VITE_EXTENSION_ID || '*';
-        chrome.runtime.sendMessage(extensionId, {
-          type: 'OPEN_POPUP'
-        });
-      }
-    } catch (error) {
-      console.log('Could not automatically open extension:', error);
-    }
+    console.log('Authentication successful, user should click extension icon to open');
     
     setTimeout(() => {
       setMessage('Authentication successful! Click the Intent extension icon in your browser toolbar to continue.');
-    }, 2000);
+    }, 1500);
   };
 
   const handleSuccessfulAuth = async (session: any, isFromExtension: boolean) => {
@@ -115,7 +80,17 @@ function AuthCallback() {
           }, '*');
         }
         
-        // Try to open the extension
+        try {
+          if (typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
+            await chrome.runtime.sendMessage(extensionId, {
+              type: 'CLOSE_AUTH_TABS',
+              origin: window.location.origin
+            });
+          }
+        } catch (error) {
+          console.log('Could not request tab closure:', error);
+        }
+        
         await openExtension();
         
       } catch (error) {

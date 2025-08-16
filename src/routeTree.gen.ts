@@ -15,7 +15,6 @@ import { Route as SubscriptionSuccessRouteImport } from './routes/subscription-s
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as AuthCallbackRouteImport } from './routes/auth-callback'
-import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { ServerRoute as ApiPortalServerRouteImport } from './routes/api/portal'
 import { ServerRoute as ApiCheckoutServerRouteImport } from './routes/api/checkout'
@@ -43,11 +42,6 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
   path: '/auth-callback',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -71,7 +65,6 @@ const ApiWebhookPolarServerRoute = ApiWebhookPolarServerRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
   '/auth-callback': typeof AuthCallbackRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -79,7 +72,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
   '/auth-callback': typeof AuthCallbackRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -88,7 +80,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
   '/auth-callback': typeof AuthCallbackRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -98,23 +89,15 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/auth'
     | '/auth-callback'
     | '/pricing'
     | '/privacy'
     | '/subscription-success'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/auth'
-    | '/auth-callback'
-    | '/pricing'
-    | '/privacy'
-    | '/subscription-success'
+  to: '/' | '/auth-callback' | '/pricing' | '/privacy' | '/subscription-success'
   id:
     | '__root__'
     | '/'
-    | '/auth'
     | '/auth-callback'
     | '/pricing'
     | '/privacy'
@@ -123,7 +106,6 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthRoute: typeof AuthRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -189,13 +171,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -233,7 +208,6 @@ declare module '@tanstack/react-start/server' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthRoute: AuthRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
