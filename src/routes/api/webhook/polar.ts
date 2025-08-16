@@ -1,6 +1,20 @@
 import { createServerFileRoute } from '@tanstack/react-start/server'
 import { Webhooks } from "@polar-sh/tanstack-start"
-import { supabase } from '../../../lib/supabase'
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.VITE_SUPABASE_URL!
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+
+if (!supabaseUrl || !supabaseServiceKey) {
+  throw new Error('Missing Supabase environment variables. Please add VITE_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to your environment.')
+}
+
+const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false
+  }
+})
 
 export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
   POST: Webhooks({
@@ -14,8 +28,17 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
         console.error('No externalId in subscription created webhook')
         return
       }
+
+      console.log(`Updating user ${userId} with subscription data:`, {
+        polar_customer_id: data.customer.id,
+        polar_subscription_id: data.id,
+        polar_customer_email: data.customer.email,
+        subscription_status: 'active',
+        current_period_start: data.currentPeriodStart,
+        current_period_end: data.currentPeriodEnd,
+      })
       
-      const { error } = await supabase
+      const { data: updateResult, error } = await supabaseAdmin
         .from('profiles')
         .update({
           polar_customer_id: data.customer.id,
@@ -26,9 +49,12 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
           current_period_end: data.currentPeriodEnd,
         })
         .eq('id', userId)
+        .select()
       
       if (error) {
         console.error('Error updating profile on subscription created:', error)
+      } else {
+        console.log('Successfully updated profile on subscription created:', updateResult)
       }
     },
     
@@ -40,8 +66,10 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
         console.error('No externalId in subscription active webhook')
         return
       }
+
+      console.log(`Updating user ${userId} subscription status to active`)
       
-      const { error } = await supabase
+      const { data: updateResult, error } = await supabaseAdmin
         .from('profiles')
         .update({
           subscription_status: 'active',
@@ -49,9 +77,12 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
           current_period_end: data.currentPeriodEnd,
         })
         .eq('id', userId)
+        .select()
       
       if (error) {
         console.error('Error updating profile on subscription active:', error)
+      } else {
+        console.log('Successfully updated profile on subscription active:', updateResult)
       }
     },
     
@@ -63,16 +94,21 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
         console.error('No externalId in subscription canceled webhook')
         return
       }
+
+      console.log(`Updating user ${userId} subscription status to canceled`)
       
-      const { error } = await supabase
+      const { data: updateResult, error } = await supabaseAdmin
         .from('profiles')
         .update({
           subscription_status: 'canceled',
         })
         .eq('id', userId)
+        .select()
       
       if (error) {
         console.error('Error updating profile on subscription canceled:', error)
+      } else {
+        console.log('Successfully updated profile on subscription canceled:', updateResult)
       }
     },
     
@@ -84,17 +120,22 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
         console.error('No externalId in subscription revoked webhook')
         return
       }
+
+      console.log(`Updating user ${userId} subscription status to expired`)
       
-      const { error } = await supabase
+      const { data: updateResult, error } = await supabaseAdmin
         .from('profiles')
         .update({
           subscription_status: 'expired',
           current_period_end: new Date().toISOString(),
         })
         .eq('id', userId)
+        .select()
       
       if (error) {
         console.error('Error updating profile on subscription revoked:', error)
+      } else {
+        console.log('Successfully updated profile on subscription revoked:', updateResult)
       }
     },
     
@@ -106,16 +147,21 @@ export const ServerRoute = createServerFileRoute('/api/webhook/polar').methods({
         console.error('No externalId in subscription uncanceled webhook')
         return
       }
+
+      console.log(`Updating user ${userId} subscription status to active (uncanceled)`)
       
-      const { error } = await supabase
+      const { data: updateResult, error } = await supabaseAdmin
         .from('profiles')
         .update({
           subscription_status: 'active',
         })
         .eq('id', userId)
+        .select()
       
       if (error) {
         console.error('Error updating profile on subscription uncanceled:', error)
+      } else {
+        console.log('Successfully updated profile on subscription uncanceled:', updateResult)
       }
     },
     
