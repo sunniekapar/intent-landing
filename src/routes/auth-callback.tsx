@@ -15,58 +15,51 @@ function AuthCallback() {
 
   useEffect(() => {
     const handleAuthCallback = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error('Session error:', error);
-          throw error;
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session) {
+        console.log('Session found, sending to extension:', session.user?.email);
+        try {
+          const extensionId = import.meta.env.VITE_EXTENSION_ID || '*';
+          if (typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
+            await chrome.runtime.sendMessage(extensionId, {
+              type: 'AUTH_SUCCESS',
+              session: {
+                access_token: session.access_token,
+                refresh_token: session.refresh_token,
+                user: session.user,
+              }
+            });
+            console.log('Session sent to extension');
+          }
+        } catch (error) {
+          console.log('Extension not available:', error);
         }
-        
-        if (session) {
-          console.log('Session found:', session.user?.email);
-          await handleSuccessfulAuth(session);
-        } else {
-          setStatus('error');
-          setMessage('Please check your email for the confirmation link to complete signup.');
+      }
+      
+      setStatus('success');
+      setMessage('Authentication successful! Click the Intent extension icon to continue.');
+      
+      try {
+        const extensionId = import.meta.env.VITE_EXTENSION_ID || '*';
+        if (typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
+          await chrome.runtime.sendMessage(extensionId, {
+            type: 'CLOSE_EXTENSION_TABS'
+          });
+          console.log('Requested to close extension tabs');
         }
       } catch (error) {
-        console.error('Auth callback error:', error);
-        setStatus('error');
-        setMessage(error instanceof Error ? error.message : 'Authentication failed');
+        console.log('Could not close extension tabs:', error);
       }
+      
+      setTimeout(() => {
+        navigate({ to: '/' });
+      }, 3000);
     };
 
     handleAuthCallback();
   }, [navigate]);
 
-  const handleSuccessfulAuth = async (session: any) => {
-    setStatus('success');
-    setMessage('Authentication successful!');
-    
-    try {
-      const extensionId = import.meta.env.VITE_EXTENSION_ID || '*';
-      
-      if (typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
-        await chrome.runtime.sendMessage(extensionId, {
-          type: 'AUTH_SUCCESS',
-          session: {
-            access_token: session.access_token,
-            refresh_token: session.refresh_token,
-            user: session.user,
-          }
-        });
-        console.log('Session sent to extension successfully');
-        setMessage('Authentication successful! You can now use the Intent extension.');
-      }
-    } catch (error) {
-      console.log('Extension not available (might not be installed):', error);
-    }
-    
-    setTimeout(() => {
-      navigate({ to: '/' });
-    }, 2000);
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black">
