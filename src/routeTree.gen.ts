@@ -17,6 +17,7 @@ import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as AuthCallbackRouteImport } from './routes/auth-callback'
 import { Route as IndexRouteImport } from './routes/index'
 import { ServerRoute as ApiPortalServerRouteImport } from './routes/api/portal'
+import { ServerRoute as ApiOpenrouterServerRouteImport } from './routes/api/openrouter'
 import { ServerRoute as ApiCheckoutServerRouteImport } from './routes/api/checkout'
 import { ServerRoute as ApiWebhookPolarServerRouteImport } from './routes/api/webhook/polar'
 
@@ -50,6 +51,11 @@ const IndexRoute = IndexRouteImport.update({
 const ApiPortalServerRoute = ApiPortalServerRouteImport.update({
   id: '/api/portal',
   path: '/api/portal',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
+const ApiOpenrouterServerRoute = ApiOpenrouterServerRouteImport.update({
+  id: '/api/openrouter',
+  path: '/api/openrouter',
   getParentRoute: () => rootServerRouteImport,
 } as any)
 const ApiCheckoutServerRoute = ApiCheckoutServerRouteImport.update({
@@ -113,30 +119,43 @@ export interface RootRouteChildren {
 }
 export interface FileServerRoutesByFullPath {
   '/api/checkout': typeof ApiCheckoutServerRoute
+  '/api/openrouter': typeof ApiOpenrouterServerRoute
   '/api/portal': typeof ApiPortalServerRoute
   '/api/webhook/polar': typeof ApiWebhookPolarServerRoute
 }
 export interface FileServerRoutesByTo {
   '/api/checkout': typeof ApiCheckoutServerRoute
+  '/api/openrouter': typeof ApiOpenrouterServerRoute
   '/api/portal': typeof ApiPortalServerRoute
   '/api/webhook/polar': typeof ApiWebhookPolarServerRoute
 }
 export interface FileServerRoutesById {
   __root__: typeof rootServerRouteImport
   '/api/checkout': typeof ApiCheckoutServerRoute
+  '/api/openrouter': typeof ApiOpenrouterServerRoute
   '/api/portal': typeof ApiPortalServerRoute
   '/api/webhook/polar': typeof ApiWebhookPolarServerRoute
 }
 export interface FileServerRouteTypes {
   fileServerRoutesByFullPath: FileServerRoutesByFullPath
-  fullPaths: '/api/checkout' | '/api/portal' | '/api/webhook/polar'
+  fullPaths:
+    | '/api/checkout'
+    | '/api/openrouter'
+    | '/api/portal'
+    | '/api/webhook/polar'
   fileServerRoutesByTo: FileServerRoutesByTo
-  to: '/api/checkout' | '/api/portal' | '/api/webhook/polar'
-  id: '__root__' | '/api/checkout' | '/api/portal' | '/api/webhook/polar'
+  to: '/api/checkout' | '/api/openrouter' | '/api/portal' | '/api/webhook/polar'
+  id:
+    | '__root__'
+    | '/api/checkout'
+    | '/api/openrouter'
+    | '/api/portal'
+    | '/api/webhook/polar'
   fileServerRoutesById: FileServerRoutesById
 }
 export interface RootServerRouteChildren {
   ApiCheckoutServerRoute: typeof ApiCheckoutServerRoute
+  ApiOpenrouterServerRoute: typeof ApiOpenrouterServerRoute
   ApiPortalServerRoute: typeof ApiPortalServerRoute
   ApiWebhookPolarServerRoute: typeof ApiWebhookPolarServerRoute
 }
@@ -189,6 +208,13 @@ declare module '@tanstack/react-start/server' {
       preLoaderRoute: typeof ApiPortalServerRouteImport
       parentRoute: typeof rootServerRouteImport
     }
+    '/api/openrouter': {
+      id: '/api/openrouter'
+      path: '/api/openrouter'
+      fullPath: '/api/openrouter'
+      preLoaderRoute: typeof ApiOpenrouterServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
     '/api/checkout': {
       id: '/api/checkout'
       path: '/api/checkout'
@@ -218,6 +244,7 @@ export const routeTree = rootRouteImport
   ._addFileTypes<FileRouteTypes>()
 const rootServerRouteChildren: RootServerRouteChildren = {
   ApiCheckoutServerRoute: ApiCheckoutServerRoute,
+  ApiOpenrouterServerRoute: ApiOpenrouterServerRoute,
   ApiPortalServerRoute: ApiPortalServerRoute,
   ApiWebhookPolarServerRoute: ApiWebhookPolarServerRoute,
 }
