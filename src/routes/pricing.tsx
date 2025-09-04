@@ -21,8 +21,7 @@ function PricingPage() {
   const headerCtaRef = useRef<HTMLButtonElement | null>(null)
   
   const handleGetExtensionClick = () => {
-    //TODO: Change to actual extension id when in prod
-    window.open('https://chrome.google.com/webstore/detail/ehfoddcbmgdfbdlkcockblbjcjakibio', '_blank')
+    window.open('https://chromewebstore.google.com/detail/intent/bmlpllpcbgbifinbbkfegnenmmnhakpf', '_blank')
   }
 
   return (
